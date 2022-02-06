@@ -1,112 +1,85 @@
 import time
-def timeprinter(p): #ensures proper 24 hour format
-    if p < 10:
-        o = '0'+str(p) #makes it 0x instead of just x
-        return(o)
-    else:
-        o = str(p) #if it already is 2 digit then no change is made except casting as string
-        return(o)
 
+#field of constants
+TIME_LIMIT = 360000 #100h time limit
 
-while True:
-    x=0 #seconds
-    y=0 #minutes
-    z=0 #hours
-    sec=0 #time in second format
-    choice = input("Type '1' to count up time. Type '2' to count down time. ")
-    if choice == '1': #count up timer
-        input("You have chosen to count up time. Press enter to continue. ")
-        while True:
-            sec=sec+1
-            x=x+1
-            if x == 60: #converts upon overflow
-                y=y+1
-                x=0
-            if y == 60:
-                z=z+1
-                y=0
+class Countup:
+    x = 0
+    y = 0
+    z = 0
+    secs = 0
 
-            x2 = timeprinter(x)
-            y2 = timeprinter(y)
-            z2 = timeprinter(z)
+    def increment(self):
+        self.secs += 1
+        self.x += 1
+        if self.x == 60:
+            self.y += 1
+            self.x = 0
+        if self.y == 60:
+            self.z += 1
+            self.y = 0
+        time.sleep(1)
 
-            print(z2+':'+y2+':'+x2+' '+str(sec)+'s')
-            time.sleep(1)
-    elif choice == '2': #Count down timer
-        input("You have chosen to count down time. Press enter to continue ")
-        settime = input("Please input desired time in seconds. If you would like to input in minutes, type 'm'. ")
-        if settime == 'm':
-            minutes = True
-            settime = input("Please input desired time in minutes. ")
-            try:
-                settime = int(settime) #settime may be depreciated as it could become redundant
-                x = settime*60
-                sec = x
-                y = settime
-                z = y//60
-                x = x%60
-                if sec != 0 and x == 0: #to ensure that on the first time it does not remove a minute
-                    x=60
-                    y=y-1
-                while sec != 0:
-                    sec=sec-1
-                    if sec != 0: #ensures it avoids a -1
-                        x=x-1
-                        if x == 0: #Overflower but for the negatives
-                            y=y-1
-                            x=59
-                        if sec > 59: #ensures it avoids a -1 in the minutes
-                            if y == 0:
-                                z=z-1
-                                y=59
-                    else:
-                        x=x-1 #ensures it finishes on x=0
+    def print(self):
+        print("%02d:%02d:%02d "+str(self.secs)+"s")
 
-                    x2 = timeprinter(x)
-                    y2 = timeprinter(y)
-                    z2 = timeprinter(z)
+#https://youtu.be/M2dhD9zR6hk
+class Countdown:
+    x = 0
+    y = 0
+    z = 0
+    secs = 0
 
-                    print(z2+':'+y2+':'+x2+' '+str(sec)+'s')
-                    time.sleep(1) #the actual point of the timer
-            except:
-                print("You have chosen something other than a number. Idiot.")
+    def __init__(self, amount, mins):
+        if mins == True:
+            self.x = 1
+            #do something
         else:
-            try:
-                settime = int(settime)
-                minutes = False
-                sec = settime
-                x=sec%60 #0h 0m 2s 3602
-                y=sec//60 #0h 60m 2s 3602
-                z=y//60 #1h 60m 2s 3602
-                y -=60 #1h 0m 2s 3602
-                if sec != 0 and x == 0: #This can probably be merged into 1 function by using 'choice' to determine whether it adds or subtracts
-                    x=59
-                    y=y-1
-                while sec != 0:
-                    if sec != 0 and x == 0: #This can probably be merged into 1 function by using 'choice' to determine whether it adds or subtracts
-                        x=60
-                        y=y-1 
-                    sec=sec-1 #1h 0m 2s 3601
-                    if sec != 0:
-                        x=x-1 #1h 0m 1s 3601
-                        ##if x == 0 and y != 0 and (sec%60) != 0:
-                            ##y = y-1 
-                            ##x = 59 
-                        if sec > 60:
-                            if y == 0 and x != 0 and z != 0:
-                                z=z-1 
-                                y=59
-                    else:
-                        x=x-1
-                   
-                    x2 = timeprinter(x)
-                    y2 = timeprinter(y)
-                    z2 = timeprinter(z)
+            self.secs = amount
 
-                    print(z2+':'+y2+':'+x2+' '+str(sec)+'s')
-                    time.sleep(1)
-            except:
-                print("You have chosen something other than a number or the letter 'm'. Idiot.")
+            self.z = self.secs//3600
+            self.secs -= self.z*3600
+            
+            self.y = self.secs//60
+            self.secs -= self.y*60
 
-    else:
-        print("You have chosen something other than 1 and 2. Idiot. Try again.")
+            self.x = self.secs
+            self.secs = amount 
+
+
+#Main, technically main, code execution starts here
+while True: #two while loops permit a kind of retry should an input be invalid
+    while True:
+        choice = input("Select mode, 'countup' for counting up, 'countdown' for counting down")
+        if choice != "countup" or choice != "countdown":
+            print("Invalid input. Try again.")
+            continue
+        break
+    if choice == "countup":
+        clock = Countup()
+        while clock.secs != 360000: #100 hour limit
+            clock.increment()
+            clock.print()
+        if clock.secs == 360000:
+            print("Counting finished, limit of 100h reached")
+            exit(0)
+        elif clock.secs != 360000:
+            print("Counting finished, early termination")
+            exit(0)
+    if choice == "countdown":
+        while True:
+            amount = input("Insert time in seconds, or type 'm' to insert time in minutes.")
+            if amount == 'm':
+                mode = True
+                while True: #in minutes
+                    amount = input("Insert time in minutes.")
+                    if isinstance(amount, int) == True:
+                        break
+                    continue
+            elif isinstance(amount, int) == True: #in seconds
+                break
+            else:
+                print("Invalid input.")
+                continue
+            break
+        #call a class
