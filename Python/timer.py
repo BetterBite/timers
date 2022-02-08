@@ -32,19 +32,24 @@ class Countdown:
 
     def __init__(self, amount, mins):
         if mins == True:
-            self.x = 1
-            #TO DO
+            self.secs = amount*60
+            self.timeassignment()
+            self.secs = amount*60
         else:
             self.secs = amount
-            #proper assignment of time variables
-            self.z = self.secs//3600
-            self.secs -= self.z*3600
-            
-            self.y = self.secs//60
-            self.secs -= self.y*60
+            self.timeassignment()
+            self.secs = amount #both paths manipulate self.secs as timeassignment performs its operations and thus it must be reset upon completion
 
-            self.x = self.secs
-            self.secs = amount #reset to original value
+
+    def timeassignment(self):
+        #proper assignment of time variables
+        self.z = self.secs//3600
+        self.secs -= self.z*3600
+        
+        self.y = self.secs//60
+        self.secs -= self.y*60
+
+        self.x = self.secs
 
     def decrement(self):
         self.secs -= 1
