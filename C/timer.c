@@ -23,7 +23,7 @@ void errorhandler(int input){ //handles all possible cases of input error
         printf("To use: /timer countup\n        /timer countdown time [m for minutes] \n");
         exit(0);
     }
-    if (input == NAN) {} //countdown input is not a 
+    if (input == NAN) {} //countdown input is not a number
         fprintf(stderr, "Input is not a positive number.\n");
         exit(0);
     }
