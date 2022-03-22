@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <stdbool.h>
 #define LIMIT 360000 //100h is the limit of all input
 #define FALSE 0
 #define TRUE 1
