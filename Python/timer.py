@@ -31,7 +31,7 @@ class Countdown:
     x = 0
     y = 0
     z = 0
-    secs = 1
+    secs = 1 # countdown stops at 0, hence secs is 1 so if the program was asked to countdown 1 second, then something will still show otherwise it will do nothing
 
     def __init__(self, amount, mins):
         if mins:
